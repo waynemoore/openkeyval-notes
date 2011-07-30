@@ -1,4 +1,4 @@
-var MAIN_KEY = 'foo-92jd63kd';
+var MAIN_KEY = 'foo-q3ehksk';
 
 var Keys = {
     POST_IDS: MAIN_KEY + '-i',
@@ -7,9 +7,23 @@ var Keys = {
 };
 
 $(function() {
+    window.log = new Log($('#log'));
     displayPosts();
     $('#post-button').click(createPost);
 });
+
+function Log($log) {
+    function info(msg) {
+        $log.append($('<p>').text(msg));
+    }
+    function clear() {
+        $log.empty();
+    }
+    return {
+        'info': info,
+        'clear': clear
+    };
+}
 
 function pushPost(text) {
     $('#output').append('<p>' + text + '<p>');
@@ -17,17 +31,21 @@ function pushPost(text) {
 
 function displayPosts() {
     function fetchPosts(idList) {
-        if (idList == 'null') {
+        if (idList == null) {
+            log.info('No notes to fetch, try creating one.');
             return;
         }
 
         var ids = idList.split(',');
+        log.info('Fetching ' + ids.length + ' note(s)...');
 
         for (var i = 0, len = ids.length; i < len; i++) {
             var key = Keys.POST_PREFIX + ids[i];
             window.remoteStorage.getItem(key, pushPost);
         }
     };
+
+    log.clear();
     window.remoteStorage.getItem(Keys.POST_IDS, fetchPosts);
 };
 
@@ -36,40 +54,42 @@ function createPost() {
     var text = $('#input').val();
 
     function displayPost() {
-        console.log('displayPost', text);
+        log.info('displayPost: ' + text);
         pushPost(text);
     }
 
     function updatePostList(ids) {
-        if (ids == 'null') {
+        if (ids == null) {
             ids = '' + id;
         } else {
             ids += ',' + id;
         }
-        console.log('updatePostList', ids);
+        log.info('updatePostList: ' + ids);
         window.remoteStorage.setItem(Keys.POST_IDS, ids, displayPost);
     }
 
     function getPostList() {
-        console.log('getPostList', text);
+        log.info('getPostList');
         window.remoteStorage.getItem(Keys.POST_IDS, updatePostList);
     }
 
     function savePost() {
         var key = Keys.POST_PREFIX + id;
-        console.log('savePost', key, text);
+        log.info('savePost: [' + key + ']: ' + text);
         window.remoteStorage.setItem(key, text, getPostList);
     }
 
     function incrementId(strId) {
-        console.log('incrementId', strId);
         id = parseInt(strId, 10);
         if (isNaN(id)) {
             id = 0;
         }
-        window.remoteStorage.setItem(Keys.COUNTER, id + 1, savePost);
+        id = id + 1;
+        log.info('incremented id: ' + id);
+        window.remoteStorage.setItem(Keys.COUNTER, id, savePost);
     }
 
+    log.clear();
     window.remoteStorage.getItem(Keys.COUNTER, incrementId);
 }
 

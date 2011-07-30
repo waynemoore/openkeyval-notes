@@ -12,6 +12,8 @@ Usage
 Open up the main javascript file and change the "MAIN_KEY" value to something
 only you know, e.g. "foo-9831724jksdf".
 
+Note, this was only tested in Chrome.
+
 WARNING
 =======
 This is very insecure.  Anyone who knows the value of MAIN_KEY can easily
