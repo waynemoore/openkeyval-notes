@@ -1,0 +1,18 @@
+Description
+===========
+A very basic note taking app using OpenKeyval (http://openkeyval.org/) 
+as a storage backend.
+
+This was just a quick hack to demonstrate how you could drop a few
+files into dropbox and have a dynamic site served from a dropbox public
+URL.
+
+Usage
+=====
+Open up the main javascript file and change the "MAIN_KEY" value to something
+only you know, e.g. "foo-9831724jksdf".
+
+WARNING
+=======
+This is very insecure.  Anyone who knows the value of MAIN_KEY can easily
+alter your data and potentially inject code into your page.
